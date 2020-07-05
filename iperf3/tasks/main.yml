@@ -1,11 +1,10 @@
 ---
-# tasks file for iperf3
 - name: check bond
   include: check_bond.yml
-- name: include iperf3 server tasklist
-  include: run_iperf3_server.yml
-- name: include iperf3 client tasklist
-  include: run_iperf3_client.yml
-  with_items: "{{ groups['servers'] }}"
+- name: run iperf client
+  include: client.yml.yml
+- name: run iperf server
+  include: server.yml
+  with_items: "{{ groups['iperf_server'] }}"
   when: inventory_hostname != item
 

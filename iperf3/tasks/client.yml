@@ -50,12 +50,14 @@
 
 - name: Create empty file - summery.txt
   file: 
-    path: /etc/ansible/summery.txt
+    path: /etc/ansible/{{ item }}
     state: touch
     owner: root
     group: root
     mode: 0600
   delegate_to: localhost
+  with_items:
+  - summery.txt
   run_once: yes
 
 - name: add the test result into the summery file
@@ -78,7 +80,7 @@
 
 - name: Compare it is lower then
   shell: echo "Failed because number is lower than expected"
-  failed_when: "{{ item }} < 100"
+  failed_when: "{{ item }} < {{ bandwidth_num }}
   delegate_to: localhost
   with_items:
   - "{{ final_number.stdout_lines }}"
