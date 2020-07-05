@@ -1,4 +1,4 @@
-- name: running bench from all server towards {{ item }}
+- name: running bench from all server to {{ item }}
   shell: "iperf -c {{ item }}"
   register: output
 
@@ -14,11 +14,11 @@
   run_once: yes
 
 - name: Echo result into file.
-  shell: echo {{ result }} >> test.txt
+  shell: echo {{ result }} >> "{{ result_file }}"
   delegate_to: localhost 
 
 - name: Cut the bandwidth from the text file
-  shell: cat test.txt | awk '{print $ 7}'
+  shell: cat "{{ result_file }}" | awk '{print $ 7}'
   register: numbers
   delegate_to: localhost  
  
@@ -32,7 +32,7 @@
   delegate_to: localhost
 
 - name: Calculate the numbers
-  shell: cat test.txt | awk '{print $ 7}' | awk '{s+=$1} END {print s}'  
+  shell: cat "{{ result_file }}" | awk '{print $ 7}' | awk '{s+=$1} END {print s}'  
   delegate_to: localhost
   register: final_number
   run_once: yes
@@ -57,18 +57,19 @@
     mode: 0600
   delegate_to: localhost
   with_items:
-  - summery.txt
+  - "{{ summery_file }}"
   run_once: yes
 
 - name: add the test result into the summery file
   blockinfile:
-    path: /etc/ansible/summery.txt
+    path: /etc/ansible/{{ item[3] }}
     block: |
       {{ item[0] }} {{ item[1] }}
     marker: "# {mark} ANSIBLE MANAGED BLOCK {{ item[0] }}"
   with_nested:
   - "{{ item }}"
   - "{{ final_number.stdout_lines }}"
+  - "{{ summery_file }}"
   delegate_to: localhost
 
 - name: Remove file (delete file)
@@ -76,6 +77,8 @@
     path: /etc/ansible/roles/test.txt
     state: absent
   delegate_to: localhost
+  with_items: 
+  - "{{ result_file }}"
   run_once: yes
 
 - name: Compare it is lower then
