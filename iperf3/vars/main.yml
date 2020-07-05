@@ -2,4 +2,5 @@
 result_file = test.txt
 bandwidth_num = 100
 summery_file = summery.txt
-
+bond_name = bond0
+bond_orig_speed = 1000

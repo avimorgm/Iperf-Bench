@@ -4,7 +4,7 @@
   with_items:
   - "{{ ansible_interfaces }}"
   when:
-  - item == 'eth0'
+  - item == "{{ bond_name }}"
   register: interface_bond
   no_log: False
 
@@ -21,18 +21,18 @@
 
 - name: debug the name
   set_fact:
-    aa: "{{ aa|default([]) +[{ 'aa_name': item }] }}"
+    bond_list: "{{ aa|default([]) +[{ 'bond_name': item }] }}"
   with_items:
   - "{{ bond_info }}"
 
 - debug:
-     msg: "{{ item.aa_name.bond_speed }}"
-  with_items: "{{ aa }}"
+     msg: "{{ item.bond_name.bond_speed }}"
+  with_items: "{{ bond_list }}"
 
 - name: set the fact as var
   set_fact: 
-     result1: "{{ item.aa_name.bond_speed }}" 
-  with_items: "{{ aa }}"
+     result1: "{{ item.bond_name.bond_speed }}" 
+  with_items: "{{ bond_list }}"
  
 - name: debug
   debug: var=result1
@@ -40,8 +40,9 @@
 
 - name: check if the nubmer is 1000
   shell: echo "ALL IS OKAY"
-  when: "{{ item }} == 1000"
-  with_items: 
+  when: "{{ item[0]}} == {{ item[1] }}"
+  with_nested: 
   - "{{ result1 }}"
+  - "{{ bond_orig_speed }}"
 
 
