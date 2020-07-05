@@ -1,0 +1,2 @@
+- name: run iperf3 server on detached mode
+  shell: "iperf -s --daemon"

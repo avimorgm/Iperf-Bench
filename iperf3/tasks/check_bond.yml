@@ -1,0 +1,47 @@
+- name: Gather list of the interfaces.
+  set_fact:
+    list: "{{ list|default([]) +  [item] }}"
+  with_items:
+  - "{{ ansible_interfaces }}"
+  when:
+  - item == 'eth0'
+  register: interface_bond
+  no_log: False
+
+- debug:
+     msg: "{{ list }}"
+  run_once: yes
+
+- name: configure link aggregation group
+  set_fact:
+    bond_info: "{{ bond_info|default([])  + [{ 'bond_name': item[0], 'bond_speed': item[1] }] }}"
+  with_nested:
+  - "{{ list }}"
+  - "{{ ansible_eth0.speed }}"
+
+- name: debug the name
+  set_fact:
+    aa: "{{ aa|default([]) +[{ 'aa_name': item }] }}"
+  with_items:
+  - "{{ bond_info }}"
+
+- debug:
+     msg: "{{ item.aa_name.bond_speed }}"
+  with_items: "{{ aa }}"
+
+- name: set the fact as var
+  set_fact: 
+     result1: "{{ item.aa_name.bond_speed }}" 
+  with_items: "{{ aa }}"
+ 
+- name: debug
+  debug: var=result1
+  run_once: yes
+
+- name: check if the nubmer is 1000
+  shell: echo "ALL IS OKAY"
+  when: "{{ item }} == 1000"
+  with_items: 
+  - "{{ result1 }}"
+
+

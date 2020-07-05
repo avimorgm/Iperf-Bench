@@ -1,0 +1,7 @@
+------------------------------------------------------------
+Client connecting to 192.168.44.12, TCP port 5001
+TCP window size:  382 KByte (default)
+------------------------------------------------------------
+[  3] local 192.168.44.10 port 52404 connected with 192.168.44.12 port 5001
+[ ID] Interval       Transfer     Bandwidth
+[  3]  0.0-10.3 sec   40.3 MBytes  32.8 Mbits/sec
