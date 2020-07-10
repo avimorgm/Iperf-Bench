@@ -1,7 +1,7 @@
 Role Name
 =========
 
-A brief description of the role goes here.
+This role make bench with IPerf on Ceph cluster infrastrcture.
 
 Requirements
 ------------
